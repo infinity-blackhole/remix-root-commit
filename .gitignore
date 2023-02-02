@@ -149,3 +149,6 @@ dist
 # Devenv
 .devenv
 .pre-commit-config.yaml
+
+# Nix
+result

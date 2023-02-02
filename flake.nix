@@ -14,15 +14,19 @@
     };
   };
 
-  outputs = { nixpkgs, devenv, ... }@inputs: {
-    devShells = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.unix (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
+  outputs = { self, nixpkgs, devenv, ... }@inputs: {
+    packages = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.unix (system:
+      let pkgs = import nixpkgs { inherit system; }; in {
+        default = pkgs.buildNpmPackage {
+          name = "remix-template-project";
+          src = self;
+          npmDepsHash = "sha256-GZr3yhmJbxpdQLe7Cly1NrJ+G7mLWTX6nc6FHKeZpGw=";
         };
-      in
-      {
+      }
+    );
+
+    devShells = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.unix (system:
+      let pkgs = import nixpkgs { inherit system; }; in {
         default = devenv.lib.mkShell {
           inherit inputs pkgs;
           modules = [
